@@ -1,7 +1,9 @@
 package com.certeixeira.demo.controller
 
-import com.certeixeira.demo.model.Topico
+import com.certeixeira.demo.dto.NovoTopicoForm
+import com.certeixeira.demo.dto.TopicoView
 import com.certeixeira.demo.service.TopicoService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,17 +17,17 @@ import java.util.*
 class TopicoController(private val service: TopicoService) {
 
     @GetMapping
-    fun listar(): List<Topico> {
+    fun listar(): List<TopicoView> {
         return service.listar()
     }
 
     @GetMapping("/{id}")
-    fun buscarPorId(@PathVariable id: Long): Topico {
+    fun buscarPorId(@PathVariable id: Long): TopicoView {
         return service.buscarPorId(id)
     }
 
     @PostMapping
-    fun cadastrar(@RequestBody topico: Topico) {
-        service.cadastrar(topico)
+    fun cadastrar(@RequestBody @Valid dto: NovoTopicoForm) {
+        service.cadastrar(dto)
     }
 }

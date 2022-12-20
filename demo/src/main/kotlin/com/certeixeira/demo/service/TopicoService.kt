@@ -3,6 +3,7 @@ package com.certeixeira.demo.service
 import com.certeixeira.demo.dto.AtualizacaoTopicoForm
 import com.certeixeira.demo.dto.NovoTopicoForm
 import com.certeixeira.demo.dto.TopicoView
+import com.certeixeira.demo.exception.NotFoundException
 import com.certeixeira.demo.mapper.TopicoFormMapper
 import com.certeixeira.demo.mapper.TopicoViewMapper
 import com.certeixeira.demo.model.Topico
@@ -14,7 +15,8 @@ class TopicoService(
     private var topicos: List<Topico> = ArrayList(),
 
     private val topicoViewMapper: TopicoViewMapper,
-    private val topicoFormMapper: TopicoFormMapper
+    private val topicoFormMapper: TopicoFormMapper,
+    private val notFoundMessage: String = "Tópico não encontrado"
 ) {
 
     fun listar(): List<TopicoView> {
@@ -26,7 +28,7 @@ class TopicoService(
     fun buscarPorId(id: Long): TopicoView {
         val topico = topicos.stream().filter { t ->
             t.id == id
-        }.findFirst().get()
+        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
 
         return topicoViewMapper.map(topico)
     }
@@ -41,7 +43,7 @@ class TopicoService(
     fun atualizar(form: AtualizacaoTopicoForm): TopicoView {
         val topico = topicos.stream().filter { t ->
             t.id == form.id
-        }.findFirst().get()
+        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
 
         val topicoAtualizado = Topico(
             id = form.id,
@@ -60,7 +62,7 @@ class TopicoService(
     fun deletar(id: Long) {
         val topico = topicos.stream().filter { t ->
             t.id == id
-        }.findFirst().get()
+        }.findFirst().orElseThrow{NotFoundException(notFoundMessage)}
         topicos = topicos.minus(topico)
     }
 }
